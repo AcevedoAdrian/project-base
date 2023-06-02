@@ -3,7 +3,7 @@ import userRouter from "./routes/user.route.js";
 import { engine } from "express-handlebars";
 const app = express();
 
-// app.use(express.static("/public"));
+app.use(express.static("public"));
 
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
