@@ -31,10 +31,15 @@ router.post('/login',
   ), async (req, res, next) => {
     if (!req.user) return res.status(400).send({ status: 'error', error: 'Credencial invalid' });
     console.log(req.user);
-    res.send({ status: 'success', payload: req.user });
+    res.cookie(process.env.JWT_COOKIE_NAME, req.user.token).redirect('/products');
+    // res.send({ status: 'success', payload: req.user });
   });
 router.get('/faillogin', async (req, res) => {
   console.log('Failed Register Strategi');
   res.json({ error: 'failed' });
+});
+
+router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.send(req.user);
 });
 export default router;

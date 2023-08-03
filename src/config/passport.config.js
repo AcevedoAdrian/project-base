@@ -3,12 +3,12 @@ import local from 'passport-local';
 import jwt from 'passport-jwt';
 
 import userModel from '../dao/models/users.model.js';
+import { cookieExtractor, generateToken } from '../utils.js';
 
-// core de la estrategia de jwt
-const JWTStrategy = jwt.Strategy;
 // core de la estrategia de local
 const LocalStrategy = local.Strategy;
-
+// core de la estrategia de jwt
+const JWTStrategy = jwt.Strategy;
 // Extrator de jwt ya sea de header o cookies
 const ExtractJWT = jwt.ExtractJwt;
 
@@ -72,7 +72,8 @@ const initializePassport = () => {
           console.log('password icorrecto');
           return done(null, false, { message: 'Usuario o Password incorrecto ' });
         }
-
+        const token = generateToken(user);
+        user.token = token;
         return done(null, user, { message: 'LOGIN CORRECTO' });
       } catch (error) {
         return done(error);
@@ -82,10 +83,11 @@ const initializePassport = () => {
     'jwt',
     new JWTStrategy(
       {
-        jwtFromRequest: ExtractJWT.fromExtractors([extractCookie]),
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
         secretOrKey: process.env.JWT_PRIVATE_KEY
       },
       async (jwt_payload, done) => {
+        console.log('jasdasdwt');
         try {
           return done(null, jwt_payload);
         } catch (error) {

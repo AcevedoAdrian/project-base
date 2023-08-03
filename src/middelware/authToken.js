@@ -1,13 +1,15 @@
 
-import jwt from 'jsonwebtoken';
+import passport from 'passport';
 
-export const authToken = (req, res, next) => {
-  let token = req.headers.auth;
-  if (!token) token = req.signedCookies.mysecretjwt;
-  if (!token) return res.status(401).json({ error: 'Not auth' });
-  jwt.verify(token, 'secret', (error, credentials) => {
-    if (error) return res.status(403).json({ error: 'Not authorized' });
-    req.user = credentials.user;
+export const authToken = async (req, res, next) => {
+  passport.authenticate('jwt', function (error, user, info) {
+    if (error) return next(error);
+
+    if (!user) {
+      return res.status(401).render('errors/base',
+        { error: info.messages ? info.messages : info.toString() });
+    }
+    req.user = user;
     next();
-  });
+  })(req, res, next);
 };
