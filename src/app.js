@@ -1,9 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import passport from 'passport';
+
 import { engine } from 'express-handlebars';
 import __dirname from './utils.js';
 import usersRouter from './routes/users.route.js';
 import connectMongoDB from './config/db.js';
+import initializePassport from './config/passport.config.js';
 
 // VARIABLE DE ENTORNOS
 dotenv.config({ path: '.env' });
@@ -22,7 +26,10 @@ app.use(express.static(__dirname + '/public'));
 app.engine('handlebars', engine());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
-
+app.use(cookieParser);
+initializePassport();
+app.use(passport.initialize());
+// app.use(passport.session());
 // CONEXION A BASE DE DATOS MONGO
 connectMongoDB();
 app.get('/', (req, res) => res.json({ Hola: 'hola' }));

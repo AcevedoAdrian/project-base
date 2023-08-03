@@ -12,10 +12,10 @@ export const connectMongoDB = async () => {
   } catch (error) {
     console.error(error);
   }
-  process.on('uncaughtException', error => {
-    console.error(error);
-    mongoose.disconnect();
-  });
+  // process.on('uncaughtException', error => {
+  //   console.error(error);
+  //   mongoose.disconnect();
+  // });
 };
 
 export default connectMongoDB;

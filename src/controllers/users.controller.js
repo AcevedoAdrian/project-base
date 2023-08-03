@@ -1,7 +1,9 @@
 
 const registerUser = (req, res) => {
   res.render('sessions/register');
-  // res.render('showUser');
 };
 
-export { registerUser };
+const loginUser = (req, res) => {
+  res.render('sessions/login');
+};
+export { registerUser, loginUser };
