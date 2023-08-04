@@ -96,16 +96,13 @@ const initializePassport = () => {
         // ACA VA EL SECRET QUE USAMOS PARA GENERAR EL TOKEN EN GENERATE TOKEN
         secretOrKey: process.env.JWT_PRIVATE_KEY
       },
-      // async (jwtPayload, done) => {
-      //   console.log('JWTStrategy');
-      //   try {
-      //     return done(null, jwtPayload);
-      //   } catch (error) {
-      //     done(error);
-      //   }
-      // }
-      async (jwt_payload, done) => {
-        done(null, jwt_payload);
+      async (jwtPayload, done) => {
+        console.log('JWTStrategy');
+        try {
+          return done(null, jwtPayload);
+        } catch (error) {
+          done(error);
+        }
       }
     )
   );

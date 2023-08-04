@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import { loginUser, registerUser } from '../controllers/users.controller.js';
+import { authToken } from '../middelware/authToken.js';
 const router = Router();
 
 router.get('/register', registerUser);
@@ -42,7 +43,7 @@ router.get('/faillogin', async (req, res) => {
   res.json({ error: 'failed' });
 });
 
-router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/current', authToken('jwt'), (req, res) => {
   res.send(req.user);
 });
 // Cerrar Session
@@ -50,7 +51,4 @@ router.get('/logout', (req, res) => {
   res.clearCookie(process.env.JWT_NAME_COOKIE).redirect('/');
 });
 
-router.get('/current2', passport.authenticate('jwt'), (req, res) => {
-  res.send(req.user);
-});
 export default router;
