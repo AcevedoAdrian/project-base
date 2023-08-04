@@ -29,9 +29,12 @@ router.post('/login',
       failureRedirect: '/failregister'
     }
   ), async (req, res, next) => {
-    if (!req.user) return res.status(400).send({ status: 'error', error: 'Credencial invalid' });
-    console.log(req.user);
-    res.cookie(process.env.JWT_COOKIE_NAME, req.user.token).redirect('/products');
+    if (!req.user) {
+      return res.status(400).send({ status: 'error', error: 'Credencial invalida' });
+    }
+    // guardo el toque que tengo almacenado en el user que me mando desde passport en la cookie de forma firmada
+    res.cookie(process.env.JWT_NAME_COOKIE, req.user.token, { signed: true })
+      .redirect('/api/sessions/current');
     // res.send({ status: 'success', payload: req.user });
   });
 router.get('/faillogin', async (req, res) => {
@@ -40,6 +43,14 @@ router.get('/faillogin', async (req, res) => {
 });
 
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.send(req.user);
+});
+// Cerrar Session
+router.get('/logout', (req, res) => {
+  res.clearCookie(process.env.JWT_NAME_COOKIE).redirect('/');
+});
+
+router.get('/current2', passport.authenticate('jwt'), (req, res) => {
   res.send(req.user);
 });
 export default router;

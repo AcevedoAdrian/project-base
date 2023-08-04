@@ -74,25 +74,38 @@ const initializePassport = () => {
         }
         const token = generateToken(user);
         user.token = token;
+
         return done(null, user, { message: 'LOGIN CORRECTO' });
       } catch (error) {
         return done(error);
       }
     }));
+  // JWT
+
   passport.use(
     'jwt',
     new JWTStrategy(
       {
+        /*
+        INDICO LA FORMA DE EXTRAER LA COOKIE,
+        EN ESTE CASO LO HACE CON EL METO QUE CONFIGURAMOS EN COOKIEEXTRATOR
+        EL CUAL RETORNA UN TOKEN
+        */
+        // jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        // ACA VA EL SECRET QUE USAMOS PARA GENERAR EL TOKEN EN GENERATE TOKEN
         secretOrKey: process.env.JWT_PRIVATE_KEY
       },
+      // async (jwtPayload, done) => {
+      //   console.log('JWTStrategy');
+      //   try {
+      //     return done(null, jwtPayload);
+      //   } catch (error) {
+      //     done(error);
+      //   }
+      // }
       async (jwt_payload, done) => {
-        console.log('jasdasdwt');
-        try {
-          return done(null, jwt_payload);
-        } catch (error) {
-          done(error);
-        }
+        done(null, jwt_payload);
       }
     )
   );

@@ -26,7 +26,7 @@ app.use(express.static(__dirname + '/public'));
 app.engine('handlebars', engine());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'handlebars');
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_PRIVATE_KEY));
 initializePassport();
 app.use(passport.initialize());
 // app.use(passport.session());

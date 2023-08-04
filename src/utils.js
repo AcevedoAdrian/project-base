@@ -9,20 +9,21 @@ const __dirname = dirname(__filename);
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 export const isValidPssword = (user, password) => bcrypt.compareSync(password, user.password);
 
+// GENRA EL TOKEN CON JWT
 export const generateToken = user => {
-  const secret = process.env.PRIVATE_KEY_JWT;
+  const { last_name, first_name, email, role } = user;
+  const SECRET = process.env.JWT_PRIVATE_KEY;
   // jwt.sing('objeto informacion', 'clave para hacer cifrado', 'tiempo de vida')
-  const token = jwt.sign({ user }, secret, { expiresIn: '24h' });
+  // const token = jwt.sign({ user }, SECRET, { expiresIn: '24h' }); funcionando
+  const token = jwt.sign({ last_name, first_name, email, role }, SECRET, { expiresIn: '24h' });
   return token;
 };
-
+// ECTRAE EL TOKEN DE UNA COOKIE
 export const cookieExtractor = req => {
-  console.log('jasdasdwt');
-  let token = null;
-  if (req && req.signedCookies) {
-    //! error ver
-    token = req.signedCookies.user;
-  }
+  const COOKIENAME = process.env.JWT_NAME_COOKIE;
+  const token =
+    req && req.signedCookies[COOKIENAME] ? req.signedCookies[COOKIENAME] : null;
+  console.log(token);
   return token;
 };
 
