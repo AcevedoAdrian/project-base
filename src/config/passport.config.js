@@ -99,7 +99,7 @@ const initializePassport = () => {
       async (jwt_payload, done) => {
         console.log('JWTStrategy');
         try {
-          return done(null, jwtPayload);
+          return done(null, jwt_payload);
         } catch (error) {
           done(error);
         }
@@ -107,28 +107,28 @@ const initializePassport = () => {
     )
   );
   // GITHUB
-  // passport.use('github', new GitHubStrategy({
-  //   clientID: process.env.GITHUB_CLIENT_ID,
-  //   clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  //   callbackURL: process.env.GITHUB_CALLBACK_URL
-  // }, async (accessToken, refreshToken, profile, done) => {
-  //   try {
-  //     console.log(profile._json.email);
-  //     const user = await userModel.findOne({ email: profile._json.email });
-  //     if (user) return done(null, user, { message: 'El usuario ya existe' });
-  //     const newUser = await userModel.create({
-  //       first_name: profile._json.name,
-  //       last_name: ' ',
-  //       email: profile._json.email,
-  //       age: 0,
-  //       password: ' ',
-  //       role: 'user'
-  //     });
-  //     return done(null, newUser, { message: 'Se creo el uruario correctamente' });
-  //   } catch (err) {
-  //     return done(`Error to login with GitHub => ${err.message}`);
-  //   }
-  // }));
+  passport.use('github', new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: process.env.GITHUB_CALLBACK_URL
+  }, async (accessToken, refreshToken, profile, done) => {
+    try {
+      console.log(profile._json.email);
+      const user = await userModel.findOne({ email: profile._json.email });
+      if (user) return done(null, user, { message: 'El usuario ya existe' });
+      const newUser = await userModel.create({
+        first_name: profile._json.name,
+        last_name: ' ',
+        email: profile._json.email,
+        age: 0,
+        password: ' ',
+        role: 'user'
+      });
+      return done(null, newUser, { message: 'Se creo el uruario correctamente' });
+    } catch (err) {
+      return done(`Error to login with GitHub => ${err.message}`);
+    }
+  }));
   // Current
   passport.use(
     'current',
