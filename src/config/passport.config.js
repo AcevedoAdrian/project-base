@@ -1,6 +1,7 @@
 import passport from 'passport';
 import local from 'passport-local';
 import jwt from 'passport-jwt';
+import GitHubStrategy from 'passport-github2';
 
 import userModel from '../dao/models/users.model.js';
 import { cookieExtractor, generateToken } from '../utils.js';
@@ -81,7 +82,6 @@ const initializePassport = () => {
       }
     }));
   // JWT
-
   passport.use(
     'jwt',
     new JWTStrategy(
@@ -96,12 +96,60 @@ const initializePassport = () => {
         // ACA VA EL SECRET QUE USAMOS PARA GENERAR EL TOKEN EN GENERATE TOKEN
         secretOrKey: process.env.JWT_PRIVATE_KEY
       },
-      async (jwtPayload, done) => {
+      async (jwt_payload, done) => {
         console.log('JWTStrategy');
         try {
           return done(null, jwtPayload);
         } catch (error) {
           done(error);
+        }
+      }
+    )
+  );
+  // GITHUB
+  // passport.use('github', new GitHubStrategy({
+  //   clientID: process.env.GITHUB_CLIENT_ID,
+  //   clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  //   callbackURL: process.env.GITHUB_CALLBACK_URL
+  // }, async (accessToken, refreshToken, profile, done) => {
+  //   try {
+  //     console.log(profile._json.email);
+  //     const user = await userModel.findOne({ email: profile._json.email });
+  //     if (user) return done(null, user, { message: 'El usuario ya existe' });
+  //     const newUser = await userModel.create({
+  //       first_name: profile._json.name,
+  //       last_name: ' ',
+  //       email: profile._json.email,
+  //       age: 0,
+  //       password: ' ',
+  //       role: 'user'
+  //     });
+  //     return done(null, newUser, { message: 'Se creo el uruario correctamente' });
+  //   } catch (err) {
+  //     return done(`Error to login with GitHub => ${err.message}`);
+  //   }
+  // }));
+  // Current
+  passport.use(
+    'current',
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: process.env.JWT_PRIVATE_KEY
+      },
+      async (jwt_payload, done) => {
+        try {
+          const user = jwt_payload.user;
+          if (!user) {
+            return done(null, false, { message: 'No se proporcionó token' });
+          }
+          const existingUser = await userModel.findById(user._id);
+          if (!existingUser) {
+            return done(null, false, { message: 'No hay ningún usuario con sesión activa' });
+          }
+          return done(null, existingUser);
+        } catch (error) {
+          return done(error);
         }
       }
     )

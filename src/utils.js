@@ -23,7 +23,6 @@ export const cookieExtractor = req => {
   const COOKIENAME = process.env.JWT_NAME_COOKIE;
   const token =
     req && req.signedCookies[COOKIENAME] ? req.signedCookies[COOKIENAME] : null;
-  console.log(token);
   return token;
 };
 
