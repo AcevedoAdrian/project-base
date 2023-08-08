@@ -113,17 +113,30 @@ const initializePassport = () => {
     callbackURL: process.env.GITHUB_CALLBACK_URL
   }, async (accessToken, refreshToken, profile, done) => {
     try {
-      console.log(profile._json.email);
+      // console.log(profile._json.email);
+
       const user = await userModel.findOne({ email: profile._json.email });
-      if (user) return done(null, user, { message: 'El usuario ya existe' });
+      if (user) {
+        // return done(null, user, { message: 'El usuario ya existe' });
+        // Si el usuario ya existe en la base de datos, generamos el token
+        const token = generateToken(user);
+        user.token = token;
+        // Enviamos el token como una cookie en la respuesta
+        return done(null, user);
+      }
+      // Para crear un carrtio nuevo
+      // const cartNewUser = await cartModel.create({});
       const newUser = await userModel.create({
-        first_name: profile._json.name,
+        first_name: profile._json.name || profile.username,
         last_name: ' ',
         email: profile._json.email,
         age: 0,
         password: ' ',
         role: 'user'
       });
+      const token = generateToken(user);
+      newUser.token = token;
+
       return done(null, newUser, { message: 'Se creo el uruario correctamente' });
     } catch (err) {
       return done(`Error to login with GitHub => ${err.message}`);
@@ -139,7 +152,8 @@ const initializePassport = () => {
       },
       async (jwt_payload, done) => {
         try {
-          const user = jwt_payload.user;
+          console.log(jwt_payload);
+          const user = jwt_payload;
           if (!user) {
             return done(null, false, { message: 'No se proporcionó token' });
           }

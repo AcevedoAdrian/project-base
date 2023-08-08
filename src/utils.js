@@ -11,11 +11,11 @@ export const isValidPssword = (user, password) => bcrypt.compareSync(password, u
 
 // GENRA EL TOKEN CON JWT
 export const generateToken = user => {
-  const { last_name, first_name, email, role } = user;
+  const { _id, last_name, first_name, email, role } = user;
   const SECRET = process.env.JWT_PRIVATE_KEY;
   // jwt.sing('objeto informacion', 'clave para hacer cifrado', 'tiempo de vida')
   // const token = jwt.sign({ user }, SECRET, { expiresIn: '24h' }); funcionando
-  const token = jwt.sign({ last_name, first_name, email, role }, SECRET, { expiresIn: '24h' });
+  const token = jwt.sign({ _id, last_name, first_name, email, role }, SECRET, { expiresIn: '24h' });
   return token;
 };
 // ECTRAE EL TOKEN DE UNA COOKIE
