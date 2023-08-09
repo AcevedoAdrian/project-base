@@ -6,6 +6,7 @@ import passport from 'passport';
 import { engine } from 'express-handlebars';
 import __dirname from './utils.js';
 import usersRouter from './routes/users.route.js';
+import productsRouter from './routes/products.router.js';
 import connectMongoDB from './config/db.js';
 import initializePassport from './config/passport.config.js';
 
@@ -34,6 +35,7 @@ app.use(passport.initialize());
 connectMongoDB();
 app.get('/', (req, res) => res.json({ Hola: 'hola' }));
 app.use('/api/sessions', usersRouter);
+app.use('/api/products', productsRouter);
 
 app.listen(9000, () => {
   console.log('Server up');

@@ -1,3 +1,4 @@
+import multer from 'multer';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import bcrypt from 'bcrypt';
@@ -8,6 +9,17 @@ const __dirname = dirname(__filename);
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 export const isValidPssword = (user, password) => bcrypt.compareSync(password, user.password);
+
+// MULTER
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, `${__dirname}/public/img`);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname + '-' + Date.now());
+  }
+});
+export const uploader = multer({ storage });
 
 // GENRA EL TOKEN CON JWT
 export const generateToken = user => {
